@@ -23,23 +23,41 @@
 #include "SoftwareSerial.h"
 #include "DFRobotDFPlayerMini.h"
 
-SoftwareSerial mySoftwareSerial(10, 11); // RX, TX
+
+SoftwareSerial mySoftwareSerial(11, 10); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 void printDetail(uint8_t type, int value);
 
 void setup()
 {
-  mySoftwareSerial.begin(9600);
-  Serial.begin(115200);
   
+  mySoftwareSerial.begin(115200);
+  int value = analogRead(A0);
+  float voltage = value * 5.0/1023.0;
+  if(!A0)  
+  {
+  Serial.println("A0 has no value");
+  }
+
+  Serial.begin(115200);
+  Serial.println(voltage);
+
   Serial.println();
   Serial.println(F("DFRobot DFPlayer Mini Demo"));
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
   
   if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
+  //----Read imformation----
+  Serial.println(myDFPlayer.readState()); //read mp3 state
+  Serial.println(myDFPlayer.readVolume()); //read current volume
+  Serial.println(myDFPlayer.readEQ()); //read EQ setting
+  Serial.println(myDFPlayer.readFileCounts()); //read all file counts in SD card
+  Serial.println(myDFPlayer.readCurrentFileNumber()); //read current play file number
+  Serial.println(myDFPlayer.readFileCountsInFolder(3)); //read file counts in folder SD:/03
+  
     Serial.println(F("Unable to begin:"));
     Serial.println(F("1.Please recheck the connection!"));
-    Serial.println(F("2.Please insert the SD card!"));
+    Serial.println(F("2.Please insert the SD card!"));    
     while(true);
   }
   Serial.println(F("DFPlayer Mini online."));
@@ -72,7 +90,8 @@ void setup()
 //  myDFPlayer.enableDAC();  //Enable On-chip DAC
 //  myDFPlayer.disableDAC();  //Disable On-chip DAC
 //  myDFPlayer.outputSetting(true, 15); //output setting, enable the output and set the gain to 15
-  
+
+  /*
   //----Mp3 play----
   myDFPlayer.next();  //Play next mp3
   delay(1000);
@@ -108,6 +127,7 @@ void setup()
   delay(1000);
   myDFPlayer.disableLoop(); //disable loop.
   delay(1000);
+*/  
 
   //----Read imformation----
   Serial.println(myDFPlayer.readState()); //read mp3 state
@@ -120,6 +140,10 @@ void setup()
 
 void loop()
 {
+   Serial.print("test1");
+  Serial.write("test2");
+  Serial.println("test3");
+
   static unsigned long timer = millis();
   
   if (millis() - timer > 3000) {
